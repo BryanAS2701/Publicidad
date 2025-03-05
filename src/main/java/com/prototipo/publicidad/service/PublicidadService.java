@@ -22,9 +22,9 @@ public class PublicidadService {
     @Autowired
     PublicidadMapper publicidadMapper;
 
-    public PublicidadDTO consultar(Long id) throws OptionalNotFoundException{
-        Publicidad publiOriginal = adrepo.findById(id).orElseThrow(() -> new RuntimeException("Ad not available"));
-        return PublicidadMapper.INSTANCE.publicidadToPublicidadDTO(publiOriginal);
+    public PublicidadDTO consultar(Long id) throws OptionalNotFoundException {
+        Publicidad publiOriginal = adrepo.findById(id).orElseThrow(() -> new OptionalNotFoundException("Ad not available"));
+        return publicidadMapper.publicidadToPublicidadDTO(publiOriginal);
     }
 
     public List<PublicidadDTO> getAll() throws OptionalNotFoundException{ 
