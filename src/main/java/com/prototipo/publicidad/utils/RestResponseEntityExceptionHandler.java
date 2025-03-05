@@ -1,7 +1,5 @@
 package com.prototipo.publicidad.utils;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -32,12 +30,12 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @Override
     @Nullable
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-            org.springframework.http.HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-                Map<String, Object> errores = new HashMap<>();
-                ex.getBindingResult().getFieldErrors().forEach(error ->{
-                    errores.put(error.getField(), error.getDefaultMessage());
-                });
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
+                                                                org.springframework.http.HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        String errorMessage = ex.getBindingResult().getFieldErrors().stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+        ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST, errorMessage);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
 
     @ExceptionHandler(InvalidInputException.class)
@@ -65,5 +63,4 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     ErrorMessage errorMessage = new ErrorMessage(status, mensaje);
     return new ResponseEntity<>(errorMessage, status);
     }
-
 }

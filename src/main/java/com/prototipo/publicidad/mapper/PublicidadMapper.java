@@ -1,37 +1,34 @@
 package com.prototipo.publicidad.mapper;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
+import org.mapstruct.factory.Mappers;
 
-import com.prototipo.publicidad.model.Image;
 import com.prototipo.publicidad.model.Publicidad;
 import com.prototipo.publicidad.model.dtoo.PublicidadDTO;
-import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring")
 public interface PublicidadMapper {
-    @Mapping(target = "imageUrl", source = "images", qualifiedByName = "mapImagesToImageUrl")
+    PublicidadMapper INSTANCE = Mappers.getMapper(PublicidadMapper.class);
+
+    @Mapping(target = "imageUrl", expression = "java(mapImageUrlsToMap(publicidad))")
     PublicidadDTO publicidadToPublicidadDTO(Publicidad publicidad);
 
-    @Named("mapImagesToImageUrl")
-    default Map<String, Map<String, String>> mapImagesToImageUrl(List<Image> images) {
-        if (images == null) {
-            return null;
-        }
-        Map<String, Map<String, String>> imageUrlAnidado = new HashMap<>();
+    default Map<String, Map<String, String>> mapImageUrlsToMap(Publicidad publicidad) {
+        Map<String, Map<String, String>> imageUrls = new HashMap<>();
 
-        for (Image image : images) {
-            String position = image.getPosition().toUpperCase(); 
-            if (!imageUrlAnidado.containsKey(position)) {
-                imageUrlAnidado.put(position, new HashMap<>());
-            }
-            imageUrlAnidado.get(position).put(image.getSize(), image.getUrl()); 
-        }
-        return imageUrlAnidado;
+        Map<String, String> horizontal = new HashMap<>();
+        horizontal.put("MEDIUM", publicidad.getImage_Horizontal_small());
+        horizontal.put("LARGE", publicidad.getImage_Horizontal_large());
+
+        Map<String, String> vertical = new HashMap<>();
+        vertical.put("MEDIUM", publicidad.getImage_Vertical_small());
+        vertical.put("LARGE", publicidad.getImage_Vertical_large());
+
+        imageUrls.put("HORIZONTAL", horizontal);
+        imageUrls.put("VERTICAL", vertical);
+
+        return imageUrls;
     }
-} 
+}

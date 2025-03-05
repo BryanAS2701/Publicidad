@@ -21,7 +21,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -40,27 +39,30 @@ public class Publicidad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @NotBlank( message = "The title cannot be empty")
     @Column(name = "title")
     private String title;
-
+    /* 
     @JsonManagedReference
     @OneToMany(mappedBy = "publicidad", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Image> images;    
-
+    private List<Image> images;*/    
     @NotBlank( message = "The redirectURL cannot be empty")
     @URL
     private String redirectUrl;
-
     @NotNull( message = "The active cannot be empty")
     private boolean active;
-
     @CreationTimestamp
     @Column(name = "AD_CREATED")
     private LocalDateTime createdAd;
-
     @UpdateTimestamp
     @Column(name = "AD_UPDATED")
     private LocalDateTime updatedAd;
+    @URL
+    private String image_Horizontal_large;
+    @URL
+    private String image_Horizontal_small;
+    @URL
+    private String image_Vertical_large;
+    @URL
+    private String image_Vertical_small;
 }
