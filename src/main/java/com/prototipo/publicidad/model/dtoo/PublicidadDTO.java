@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class PublicidadDTO {
     private Long id;
     private String title;
-    private Map<String, Map<String, String>> imageUrl;
+    private Map<String, Map<String, String>> imageUrl; 
     private String redirectUrl;
     private boolean active;
     private LocalDateTime createdAd;

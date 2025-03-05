@@ -14,6 +14,7 @@ public interface PublicidadMapper {
 
     @Mapping(target = "imageUrl", expression = "java(mapImageUrlsToMap(publicidad))")
     PublicidadDTO publicidadToPublicidadDTO(Publicidad publicidad);
+    Publicidad publicidadDTOToPublicidad(PublicidadDTO publicidadDTO);
 
     default Map<String, Map<String, String>> mapImageUrlsToMap(Publicidad publicidad) {
         Map<String, Map<String, String>> imageUrls = new HashMap<>();

@@ -1,13 +1,13 @@
 package com.prototipo.publicidad.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.prototipo.publicidad.mapper.PublicidadMapper;
-import com.prototipo.publicidad.model.Image;
 import com.prototipo.publicidad.model.Publicidad;
 import com.prototipo.publicidad.model.dtoo.PublicidadDTO;
 import com.prototipo.publicidad.repository.AdvertisementRepository;
@@ -22,54 +22,77 @@ public class PublicidadService {
     @Autowired
     PublicidadMapper publicidadMapper;
 
-    public List<PublicidadDTO> getAll(){ 
+    public PublicidadDTO consultar(Long id) throws OptionalNotFoundException{
+        Publicidad publiOriginal = adrepo.findById(id).orElseThrow(() -> new RuntimeException("Ad not available"));
+        return PublicidadMapper.INSTANCE.publicidadToPublicidadDTO(publiOriginal);
+    }
+
+    public List<PublicidadDTO> getAll() throws OptionalNotFoundException{ 
         List<Publicidad> publicidadList = adrepo.findAll();
         return publicidadList.stream()
                 .map(publicidadMapper::publicidadToPublicidadDTO)
                 .collect(Collectors.toList());
     }
-
-    public Publicidad create(Publicidad publi) throws InvalidInputException{
-        return adrepo.save(publi);
-    }
     
-    public PublicidadDTO consultar(Long id) throws OptionalNotFoundException{ 
-        Publicidad publiOriginal = adrepo.findById(id).orElseThrow(()-> new OptionalNotFoundException("ad not available"));
-        System.out.println("Imágenes asociadas: " + publiOriginal.getImages().size());
-        return publicidadMapper.publicidadToPublicidadDTO(publiOriginal);
-    }
 
-    public Publicidad update(Long id, Long imageId, Publicidad nuevo) throws OptionalNotFoundException {
-        // Buscar la publicidad por su ID
-        Publicidad publi = adrepo.findById(id).orElseThrow(() -> new OptionalNotFoundException("ad not available"));
-        Image imageToUpdate = publi.getImages().stream()
-                .filter(image -> image.getId().equals(imageId))
-                .findFirst()
-                .orElseThrow(() -> new OptionalNotFoundException("Image not found"));
+    public PublicidadDTO delete(Long id) throws OptionalNotFoundException {
+        Publicidad publicidad = adrepo.findById(id).orElseThrow(() -> new OptionalNotFoundException("Ad not available"));
 
-        if (nuevo.getImages() != null && !nuevo.getImages().isEmpty()) {
-            imageToUpdate.setUrl(nuevo.getImages().get(0).getUrl());
-            imageToUpdate.setSize(nuevo.getImages().get(0).getSize());
-            imageToUpdate.setPosition(nuevo.getImages().get(0).getPosition());
-        }
-
-        if (nuevo.getTitle() != null) {
-            publi.setTitle(nuevo.getTitle());
-        }
-    
-        if (nuevo.isActive() != publi.isActive()) {
-            publi.setActive(nuevo.isActive());
-        }
-    
-        if (nuevo.getUpdatedAd() != null) {
-            publi.setUpdatedAd(nuevo.getUpdatedAd());
-        }
-        return adrepo.save(publi);
-    }
-
-    public Publicidad delete(Long id) throws OptionalNotFoundException{
-        Publicidad publicidad = adrepo.findById(id).orElseThrow(() -> new OptionalNotFoundException("ad not available"));
         adrepo.delete(publicidad);
-        return publicidad;
+        return publicidadMapper.publicidadToPublicidadDTO(publicidad);
     }
+
+    public PublicidadDTO create(PublicidadDTO publiDTO) throws InvalidInputException {
+        if (publiDTO.getTitle() == null || publiDTO.getTitle().isEmpty()) {
+            throw new InvalidInputException("The title cannot be empty");
+        }
+        if (publiDTO.getRedirectUrl() == null || publiDTO.getRedirectUrl().isEmpty()) {
+            throw new InvalidInputException("The redirectUrl cannot be empty");
+        }
+        Publicidad publi = publicidadMapper.publicidadDTOToPublicidad(publiDTO);
+        Publicidad savedPublicidad = adrepo.save(publi);
+        return publicidadMapper.publicidadToPublicidadDTO(savedPublicidad);
+    }
+
+    public PublicidadDTO update(Long id, Long imageId, PublicidadDTO nuevoDTO) throws OptionalNotFoundException {
+        Publicidad publi = adrepo.findById(id).orElseThrow(() -> new OptionalNotFoundException("Ad not available"));
+
+        if (nuevoDTO.getImageUrl() != null) {
+            Map<String, Map<String, String>> imageUrl = nuevoDTO.getImageUrl();
+
+            if (imageUrl.containsKey("HORIZONTAL")) {
+                Map<String, String> horizontalSizes = imageUrl.get("HORIZONTAL");
+                if (horizontalSizes.containsKey("LARGE")) {
+                    publi.setImage_Horizontal_large(horizontalSizes.get("LARGE"));
+                }
+                if (horizontalSizes.containsKey("MEDIUM")) {
+                    publi.setImage_Horizontal_small(horizontalSizes.get("MEDIUM"));
+                }
+            }
+            if (imageUrl.containsKey("VERTICAL")) {
+                Map<String, String> verticalSizes = imageUrl.get("VERTICAL");
+                if (verticalSizes.containsKey("LARGE")) {
+                    publi.setImage_Vertical_large(verticalSizes.get("LARGE"));
+                }
+                if (verticalSizes.containsKey("MEDIUM")) {
+                    publi.setImage_Vertical_small(verticalSizes.get("MEDIUM"));
+                }
+            }
+        }
+
+        if (nuevoDTO.getTitle() != null) {
+            publi.setTitle(nuevoDTO.getTitle());
+        }
+    
+        if (nuevoDTO.isActive() != publi.isActive()) {
+            publi.setActive(nuevoDTO.isActive());
+        }
+    
+        if (nuevoDTO.getUpdatedAd() != null) {
+            publi.setUpdatedAd(nuevoDTO.getUpdatedAd());
+        }
+
+        Publicidad updatedPublicidad = adrepo.save(publi);
+        return publicidadMapper.publicidadToPublicidadDTO(updatedPublicidad);
+    } 
 }
