@@ -89,10 +89,6 @@ public class PublicidadService {
             publi.setActive(nuevoDTO.isActive());
         }
     
-        if (nuevoDTO.getUpdatedAd() != null) {
-            publi.setUpdatedAd(nuevoDTO.getUpdatedAd());
-        }
-    
         Publicidad updatedPublicidad = adrepo.save(publi);
         return publicidadMapper.publicidadToPublicidadDTO(updatedPublicidad);
     }
