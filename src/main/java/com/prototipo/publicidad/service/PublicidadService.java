@@ -54,32 +54,33 @@ public class PublicidadService {
         return publicidadMapper.publicidadToPublicidadDTO(savedPublicidad);
     }
 
-    public PublicidadDTO update(Long id, Long imageId, PublicidadDTO nuevoDTO) throws OptionalNotFoundException {
+    public PublicidadDTO update(Long id, PublicidadDTO nuevoDTO) throws OptionalNotFoundException { 
         Publicidad publi = adrepo.findById(id).orElseThrow(() -> new OptionalNotFoundException("Ad not available"));
-
+    
         if (nuevoDTO.getImageUrl() != null) {
             Map<String, Map<String, String>> imageUrl = nuevoDTO.getImageUrl();
-
             if (imageUrl.containsKey("HORIZONTAL")) {
                 Map<String, String> horizontalSizes = imageUrl.get("HORIZONTAL");
                 if (horizontalSizes.containsKey("LARGE")) {
                     publi.setImage_Horizontal_large(horizontalSizes.get("LARGE"));
                 }
-                if (horizontalSizes.containsKey("MEDIUM")) {
-                    publi.setImage_Horizontal_small(horizontalSizes.get("MEDIUM"));
+                if (horizontalSizes.containsKey("SMALL")) {
+                    publi.setImage_Horizontal_small(horizontalSizes.get("SMALL"));
                 }
             }
+    
+            // Si se proporcionan las imágenes verticales
             if (imageUrl.containsKey("VERTICAL")) {
                 Map<String, String> verticalSizes = imageUrl.get("VERTICAL");
                 if (verticalSizes.containsKey("LARGE")) {
                     publi.setImage_Vertical_large(verticalSizes.get("LARGE"));
                 }
-                if (verticalSizes.containsKey("MEDIUM")) {
-                    publi.setImage_Vertical_small(verticalSizes.get("MEDIUM"));
+                if (verticalSizes.containsKey("SMALL")) {
+                    publi.setImage_Vertical_small(verticalSizes.get("SMALL"));
                 }
             }
         }
-
+    
         if (nuevoDTO.getTitle() != null) {
             publi.setTitle(nuevoDTO.getTitle());
         }
@@ -91,8 +92,9 @@ public class PublicidadService {
         if (nuevoDTO.getUpdatedAd() != null) {
             publi.setUpdatedAd(nuevoDTO.getUpdatedAd());
         }
-
+    
         Publicidad updatedPublicidad = adrepo.save(publi);
         return publicidadMapper.publicidadToPublicidadDTO(updatedPublicidad);
-    } 
+    }
+    
 }

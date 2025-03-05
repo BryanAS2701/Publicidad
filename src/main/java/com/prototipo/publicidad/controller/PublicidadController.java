@@ -54,11 +54,11 @@ public class PublicidadController {
         return new ResponseEntity<>(createdPublicidad, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{id}/image/{imageId}")
-    public ResponseEntity<PublicidadDTO> update(@PathVariable Long id, @PathVariable Long imageId, @RequestBody PublicidadDTO nuevoDTO) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<PublicidadDTO> update(@PathVariable Long id, @RequestBody PublicidadDTO nuevoDTO) {
         try {
-            PublicidadDTO updatedPublicidad = publicidadService.update(id, imageId, nuevoDTO);
-            return ResponseEntity.ok(updatedPublicidad);
+            PublicidadDTO updatedPublicidad = publicidadService.update(id, nuevoDTO);
+            return ResponseEntity.ok(updatedPublicidad); 
         } catch (OptionalNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }

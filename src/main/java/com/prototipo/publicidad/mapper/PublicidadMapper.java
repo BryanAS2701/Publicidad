@@ -12,11 +12,11 @@ import com.prototipo.publicidad.model.dtoo.PublicidadDTO;
 public interface PublicidadMapper {
     @Mapping(target = "imageUrl", expression = "java(mapImageUrlsToMap(publicidad))")
     PublicidadDTO publicidadToPublicidadDTO(Publicidad publicidad);
-    
-    // Definimos el mapeo de PublicidadDTO a Publicidad 
-    @Mapping(target = "image_Horizontal_small", source = "imageUrl.HORIZONTAL.MEDIUM")
+
+    // Mapeamos de PublicidadDTO a Publicidad
+    @Mapping(target = "image_Horizontal_small", source = "imageUrl.HORIZONTAL.SMALL")
     @Mapping(target = "image_Horizontal_large", source = "imageUrl.HORIZONTAL.LARGE")
-    @Mapping(target = "image_Vertical_small", source = "imageUrl.VERTICAL.MEDIUM")
+    @Mapping(target = "image_Vertical_small", source = "imageUrl.VERTICAL.SMALL")
     @Mapping(target = "image_Vertical_large", source = "imageUrl.VERTICAL.LARGE")
     Publicidad publicidadDTOToPublicidad(PublicidadDTO publicidadDTO);
 
