@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.prototipo.publicidad.model.Publicidad;
 import com.prototipo.publicidad.model.dtoo.PublicidadDTO;
 import com.prototipo.publicidad.service.PublicidadService;
 import com.prototipo.publicidad.utils.InvalidInputException;
@@ -29,36 +28,37 @@ public class PublicidadController {
     @Autowired
     private PublicidadService publicidadService;
 
-    @GetMapping("/consultar/{id}") 
-    public ResponseEntity<?> consulta(@Valid @PathVariable Long id) throws OptionalNotFoundException{
-        PublicidadDTO publiDTO = publicidadService.consultar(id); 
-        return new ResponseEntity<>(publiDTO, HttpStatus.OK); 
+    @GetMapping("/consultar/{id}")
+    public ResponseEntity<PublicidadDTO> getPublicidad(@PathVariable Long id) throws OptionalNotFoundException {
+        PublicidadDTO publicidadDTO = publicidadService.consultar(id);
+        return new ResponseEntity<>(publicidadDTO, HttpStatus.OK);
     }
 
-    @GetMapping 
-    public ResponseEntity<?> getAll() {
-        List<PublicidadDTO> totalDTO = publicidadService.getAll(); 
-        return new ResponseEntity<>(totalDTO, HttpStatus.OK); 
+    @GetMapping
+    public ResponseEntity<List<PublicidadDTO>> getAll() throws OptionalNotFoundException{
+        List<PublicidadDTO> totalDTO = publicidadService.getAll();
+        return new ResponseEntity<>(totalDTO, HttpStatus.OK);
     }
+
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@Valid @PathVariable Long id) throws OptionalNotFoundException{
-        publicidadService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-    
-    @PostMapping
-    public ResponseEntity<?> create(@Valid @RequestBody Publicidad publi) throws InvalidInputException{
-        publicidadService.create(publi);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<?> delete(@PathVariable Long id) throws OptionalNotFoundException {
+        PublicidadDTO deletedPublicidad = publicidadService.delete(id);
+        return new ResponseEntity<>(deletedPublicidad, HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}/image/{imageId}")
-    public ResponseEntity<Publicidad> update(@PathVariable Long id, @PathVariable Long imageId, @RequestBody Publicidad nuevo) {
+
+    @PostMapping
+    public ResponseEntity<?> create(@Valid @RequestBody PublicidadDTO publiDTO) throws InvalidInputException {
+        PublicidadDTO createdPublicidad = publicidadService.create(publiDTO);
+        return new ResponseEntity<>(createdPublicidad, HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<PublicidadDTO> update(@PathVariable Long id, @RequestBody PublicidadDTO nuevoDTO) {
         try {
-            Publicidad updatedPubli = publicidadService.update(id, imageId, nuevo);
-            
-            return ResponseEntity.ok(updatedPubli);
+            PublicidadDTO updatedPublicidad = publicidadService.update(id, nuevoDTO);
+            return ResponseEntity.ok(updatedPublicidad); 
         } catch (OptionalNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }

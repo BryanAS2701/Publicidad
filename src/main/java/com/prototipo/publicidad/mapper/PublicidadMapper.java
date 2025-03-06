@@ -1,37 +1,43 @@
 package com.prototipo.publicidad.mapper;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-
+import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 
-import com.prototipo.publicidad.model.Image;
 import com.prototipo.publicidad.model.Publicidad;
 import com.prototipo.publicidad.model.dtoo.PublicidadDTO;
-import org.mapstruct.Mapper;
-
-@Mapper(componentModel = "spring")
+@Mapper(componentModel= "spring")
 public interface PublicidadMapper {
-    @Mapping(target = "imageUrl", source = "images", qualifiedByName = "mapImagesToImageUrl")
+    @Mapping(target = "imageUrl", expression = "java(mapImageUrlsToMap(publicidad))")
     PublicidadDTO publicidadToPublicidadDTO(Publicidad publicidad);
 
-    @Named("mapImagesToImageUrl")
-    default Map<String, Map<String, String>> mapImagesToImageUrl(List<Image> images) {
-        if (images == null) {
-            return null;
-        }
-        Map<String, Map<String, String>> imageUrlAnidado = new HashMap<>();
+    // Mapeamos de PublicidadDTO a Publicidad
+    @Mapping(target = "image_Horizontal_small", source = "imageUrl.HORIZONTAL.SMALL")
+    @Mapping(target = "image_Horizontal_large", source = "imageUrl.HORIZONTAL.LARGE")
+    @Mapping(target = "image_Vertical_small", source = "imageUrl.VERTICAL.SMALL")
+    @Mapping(target = "image_Vertical_large", source = "imageUrl.VERTICAL.LARGE")
+    Publicidad publicidadDTOToPublicidad(PublicidadDTO publicidadDTO);
 
-        for (Image image : images) {
-            String position = image.getPosition().toUpperCase(); 
-            if (!imageUrlAnidado.containsKey(position)) {
-                imageUrlAnidado.put(position, new HashMap<>());
-            }
-            imageUrlAnidado.get(position).put(image.getSize(), image.getUrl()); 
-        }
-        return imageUrlAnidado;
+    // Método para mapear las URLs a un mapa con la estructura deseada
+    default Map<String, Map<String, String>> mapImageUrlsToMap(Publicidad publicidad) {
+        Map<String, Map<String, String>> imageUrls = new HashMap<>();
+
+        // Mapeamos las imágenes horizontales
+        Map<String, String> horizontal = new HashMap<>();
+        horizontal.put("SMALL", publicidad.getImage_Horizontal_small());
+        horizontal.put("LARGE", publicidad.getImage_Horizontal_large());
+
+        // Mapeamos las imágenes verticales
+        Map<String, String> vertical = new HashMap<>();
+        vertical.put("SMALL", publicidad.getImage_Vertical_small());
+        vertical.put("LARGE", publicidad.getImage_Vertical_large());
+
+        // Agregamos ambos mapas al mapa principal
+        imageUrls.put("HORIZONTAL", horizontal);
+        imageUrls.put("VERTICAL", vertical);
+
+        return imageUrls;
     }
-} 
+}
