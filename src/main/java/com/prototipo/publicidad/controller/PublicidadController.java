@@ -28,39 +28,34 @@ public class PublicidadController {
     @Autowired
     private PublicidadService publicidadService;
 
-    @GetMapping("/consultar/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<PublicidadDTO> getPublicidad(@PathVariable Long id) throws OptionalNotFoundException {
         PublicidadDTO publicidadDTO = publicidadService.consultar(id);
-        return new ResponseEntity<>(publicidadDTO, HttpStatus.OK);
+        return ResponseEntity.ok(publicidadDTO); 
     }
 
     @GetMapping
-    public ResponseEntity<List<PublicidadDTO>> getAll() throws OptionalNotFoundException{
+    public ResponseEntity<List<PublicidadDTO>> read() throws OptionalNotFoundException{
         List<PublicidadDTO> totalDTO = publicidadService.getAll();
-        return new ResponseEntity<>(totalDTO, HttpStatus.OK);
+        return ResponseEntity.ok(totalDTO);
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) throws OptionalNotFoundException {
-        PublicidadDTO deletedPublicidad = publicidadService.delete(id);
-        return new ResponseEntity<>(deletedPublicidad, HttpStatus.OK);
+        publicidadService.delete(id); 
+        return ResponseEntity.ok().build(); 
     }
-
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody PublicidadDTO publiDTO) throws InvalidInputException {
-        PublicidadDTO createdPublicidad = publicidadService.create(publiDTO);
-        return new ResponseEntity<>(createdPublicidad, HttpStatus.CREATED);
+        publicidadService.create(publiDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).build(); 
     }
 
+
     @PatchMapping("/{id}")
-    public ResponseEntity<PublicidadDTO> update(@PathVariable Long id, @RequestBody PublicidadDTO nuevoDTO) {
-        try {
-            PublicidadDTO updatedPublicidad = publicidadService.update(id, nuevoDTO);
-            return ResponseEntity.ok(updatedPublicidad); 
-        } catch (OptionalNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+    public ResponseEntity<PublicidadDTO> update(@PathVariable Long id, @RequestBody PublicidadDTO nuevoDTO) throws OptionalNotFoundException {
+        publicidadService.update(id, nuevoDTO); 
+        return ResponseEntity.ok().build(); 
     }
 }

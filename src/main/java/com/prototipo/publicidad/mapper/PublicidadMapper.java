@@ -14,10 +14,11 @@ public interface PublicidadMapper {
     PublicidadDTO publicidadToPublicidadDTO(Publicidad publicidad);
 
     // Mapeamos de PublicidadDTO a Publicidad
-    @Mapping(target = "image_Horizontal_small", source = "imageUrl.HORIZONTAL.SMALL")
-    @Mapping(target = "image_Horizontal_large", source = "imageUrl.HORIZONTAL.LARGE")
-    @Mapping(target = "image_Vertical_small", source = "imageUrl.VERTICAL.SMALL")
-    @Mapping(target = "image_Vertical_large", source = "imageUrl.VERTICAL.LARGE")
+    @Mapping(target = "imageHorizontalSmall", source = "imageUrl.HORIZONTAL.SMALL")
+    @Mapping(target = "imageHorizontalLarge", source = "imageUrl.HORIZONTAL.LARGE")
+    @Mapping(target = "imageVerticalSmall", source = "imageUrl.VERTICAL.SMALL")
+    @Mapping(target = "imageVerticalLarge", source = "imageUrl.VERTICAL.LARGE")
+    @Mapping(target = "active", source = "active")
     Publicidad publicidadDTOToPublicidad(PublicidadDTO publicidadDTO);
 
     // Método para mapear las URLs a un mapa con la estructura deseada
@@ -26,13 +27,13 @@ public interface PublicidadMapper {
 
         // Mapeamos las imágenes horizontales
         Map<String, String> horizontal = new HashMap<>();
-        horizontal.put("SMALL", publicidad.getImage_Horizontal_small());
-        horizontal.put("LARGE", publicidad.getImage_Horizontal_large());
+        horizontal.put("SMALL", publicidad.getImageHorizontalSmall());
+        horizontal.put("LARGE", publicidad.getImageHorizontalLarge());
 
         // Mapeamos las imágenes verticales
         Map<String, String> vertical = new HashMap<>();
-        vertical.put("SMALL", publicidad.getImage_Vertical_small());
-        vertical.put("LARGE", publicidad.getImage_Vertical_large());
+        vertical.put("SMALL", publicidad.getImageVerticalSmall());
+        vertical.put("LARGE", publicidad.getImageVerticalLarge());
 
         // Agregamos ambos mapas al mapa principal
         imageUrls.put("HORIZONTAL", horizontal);

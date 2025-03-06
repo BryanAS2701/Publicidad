@@ -17,16 +17,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Data
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 @Table(name = "tbl_Publicidad")
 public class Publicidad {
 
@@ -36,10 +32,6 @@ public class Publicidad {
     @NotBlank( message = "The title cannot be empty")
     @Column(name = "title")
     private String title;
-    /* 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "publicidad", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Image> images;*/    
     @NotBlank( message = "The redirectURL cannot be empty")
     @URL
     private String redirectUrl;
@@ -52,11 +44,11 @@ public class Publicidad {
     @Column(name = "AD_UPDATED")
     private LocalDateTime updatedAd;
     @URL
-    private String image_Horizontal_large;
+    private String imageHorizontalLarge;
     @URL
-    private String image_Horizontal_small;
+    private String imageHorizontalSmall;
     @URL
-    private String image_Vertical_large;
+    private String imageVerticalLarge;
     @URL
-    private String image_Vertical_small;
+    private String imageVerticalSmall;
 }

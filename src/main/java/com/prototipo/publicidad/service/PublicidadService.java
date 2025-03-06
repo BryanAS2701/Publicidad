@@ -49,6 +49,21 @@ public class PublicidadService {
         if (publiDTO.getRedirectUrl() == null || publiDTO.getRedirectUrl().isEmpty()) {
             throw new InvalidInputException("The redirectUrl cannot be empty");
         }
+        if (publiDTO.getImageUrl() == null || publiDTO.getImageUrl().isEmpty()) {
+            throw new InvalidInputException("provide at least one image address.");
+        } else if (
+            (publiDTO.getImageUrl().get("HORIZONTAL") == null || publiDTO.getImageUrl().get("HORIZONTAL").isEmpty()) &&
+            (publiDTO.getImageUrl().get("VERTICAL") == null || publiDTO.getImageUrl().get("VERTICAL").isEmpty())
+        ) {
+            throw new InvalidInputException("provide at least one image address.");
+        } else if (
+            (publiDTO.getImageUrl().get("HORIZONTAL").get("SMALL") == null || publiDTO.getImageUrl().get("HORIZONTAL").get("SMALL").isEmpty()) &&
+            (publiDTO.getImageUrl().get("HORIZONTAL").get("LARGE") == null || publiDTO.getImageUrl().get("HORIZONTAL").get("LARGE").isEmpty()) &&
+            (publiDTO.getImageUrl().get("VERTICAL").get("SMALL") == null || publiDTO.getImageUrl().get("VERTICAL").get("SMALL").isEmpty()) &&
+            (publiDTO.getImageUrl().get("VERTICAL").get("LARGE") == null || publiDTO.getImageUrl().get("VERTICAL").get("LARGE").isEmpty())
+        ) {
+            throw new InvalidInputException("provide at least one image address.");
+        }
         Publicidad publi = publicidadMapper.publicidadDTOToPublicidad(publiDTO);
         Publicidad savedPublicidad = adrepo.save(publi);
         return publicidadMapper.publicidadToPublicidadDTO(savedPublicidad);
@@ -62,21 +77,20 @@ public class PublicidadService {
             if (imageUrl.containsKey("HORIZONTAL")) {
                 Map<String, String> horizontalSizes = imageUrl.get("HORIZONTAL");
                 if (horizontalSizes.containsKey("LARGE")) {
-                    publi.setImage_Horizontal_large(horizontalSizes.get("LARGE"));
+                    publi.setImageHorizontalLarge(horizontalSizes.get("LARGE"));
                 }
                 if (horizontalSizes.containsKey("SMALL")) {
-                    publi.setImage_Horizontal_small(horizontalSizes.get("SMALL"));
+                    publi.setImageHorizontalSmall(horizontalSizes.get("SMALL"));
                 }
             }
-    
-            // Si se proporcionan las imágenes verticales
+
             if (imageUrl.containsKey("VERTICAL")) {
                 Map<String, String> verticalSizes = imageUrl.get("VERTICAL");
                 if (verticalSizes.containsKey("LARGE")) {
-                    publi.setImage_Vertical_large(verticalSizes.get("LARGE"));
+                    publi.setImageVerticalLarge(verticalSizes.get("LARGE"));
                 }
                 if (verticalSizes.containsKey("SMALL")) {
-                    publi.setImage_Vertical_small(verticalSizes.get("SMALL"));
+                    publi.setImageVerticalSmall(verticalSizes.get("SMALL"));
                 }
             }
         }
